@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://alpinejs.dev/favicon.png">
+    <title>Apline JS playground</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="//unpkg.com/alpinejs" defer></script>
+</head>
+
+<body class="container ">
+    <header class="hero is-primary">
+        <div class="hero-body">
+            <p class="title">Atom JS</p>
+            <p class="subtitle">Playground to test features</p>
+        </div>
+    </header>
+
+    <nav class="breadcrumb py-3" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li class="is-active"><a href="#" aria-current="page">Counter</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section x-data="{ count: 0 }">
+            <h2 class="is-size-2">1. Scope</h2>
+            <p>
+                Everything is <em>scoped</em> in apline js, so you can use the same variable names and it will not
+                conflict with
+                other parts of your applicaion.
+            </p>
+            <p>
+                The downside of this concept is, that you can't reuse even the logic without any extra doing.
+            </p>
+            <section x-data="{ count: 0 }" class="mt-4">
+                <h3 class="is-size-5">Counter 1.1</h3>
+                <div class="field has-addons">
+                    <div class="control">
+                        <input type="number" readonly x-bind:placeholder="count" class="input">
+                    </div>
+                    <div class="control">
+                        <button x-on:click="count++" class="button is-primary">Increment counter 1</button>
+                    </div>
+                </div>
+            </section>
+
+            <section x-data="{ count: 0 }" class="mt-4">
+                <h3 class="is-size-5">Counter 1.2</h2>
+                    <div class="field has-addons">
+                        <div class="control">
+                            <input type="number" readonly x-bind:placeholder="count" class="input">
+                        </div>
+                        <div class="control">
+                            <button x-on:click="count++" class="button is-primary">Increment counter 2</button>
+                        </div>
+                    </div>
+            </section>
+        </section>
+
+        <section class="mt-6">
+            <h2 class="is-size-2">2. Reuse logic with Alpine.data</h2>
+            <p>
+                With Alpine.data() it possible to reuse the same logic in multiple places. This is particular usefull
+                for complex logic like API requests or complex calculations.
+            </p>
+            <p>Take a look in the source code to see how it works.</p>
+            <section x-data="count" class="container mt-4">
+                <h2 class="is-size-5">Counter 2.1</h2>
+                <div class="field has-addons">
+                    <div class="control">
+                        <input type="number" readonly x-bind:placeholder="count" class="input">
+                    </div>
+                    <div class="control">
+                        <button x-on:click="increaseCounter" class="button is-primary">Increment counter 1</button>
+                    </div>
+                </div>
+            </section>
+
+            <section x-data="count" class="container mt-4">
+                <h2 class="is-size-5">Counter 2.2</h2>
+                <div class="field has-addons">
+                    <div class="control">
+                        <input type="number" readonly x-bind:placeholder="count" class="input">
+                    </div>
+                    <div class="control">
+                        <button x-on:click="increaseCounter" class="button is-primary">Increment counter 2</button>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('count', () => ({
+                count: 0,
+                increaseCounter() {
+                    console.log('increaseCounter');
+                    this.count++
+                },
+            }))
+        })
+    </script>
+</body>
+
+</html>

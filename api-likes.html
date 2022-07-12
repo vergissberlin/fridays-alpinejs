@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://alpinejs.dev/favicon.png">
+    <title>Apline JS playground</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="//unpkg.com/alpinejs" defer></script>
+</head>
+
+<body class="container">
+    <header class="hero is-primary">
+        <div class="hero-body">
+            <p class="title">Atom JS</p>
+            <p class="subtitle">Playground to test features</p>
+        </div>
+    </header>
+
+    <nav class="breadcrumb py-3" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li class="is-active"><a href="#" aria-current="page">API</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div x-data="postModel" x-init="await retrievePosts">
+            <button x-show="!isLoading" @click="reloadPosts" class="button is-primary">
+                Click to releoad the posts
+            </button>
+            <button class="button is-primary is-loading" x-show="isLoading">Loading</button>
+            <template x-for="post in posts">
+                <div class="card mt-5" x-show="!isLoading" x-transition>
+                    <div class="card-image">
+                        <figure class="image is-4by3">
+                            <img x-bind:src="post.photo" x-bind:alt="post.title">
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-left">
+                                <figure class="image is-48x48">
+                                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <p x-text="post.title" class="title is-4"></p>
+                                <p class="subtitle is-6">@johnsmith</p>
+                            </div>
+                        </div>
+
+                        <div class="content" x-text="post.body">
+                            <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('postModel', () => ({
+                isLoading: false,
+                posts: [],
+                reloadPosts() {
+                    this.isLoading = true
+                    setTimeout(() => {
+                        this.retrievePosts()
+                    }, 2000)
+                },
+                async retrievePosts() {
+                    this.isLoading = true
+                    this.posts = await (await fetch('https://mockend.com/vergissberlin/fridays-mock/posts')).json();
+                    this.isLoading = false
+                },
+                newpost: {},
+
+                updatedpost: {},
+
+                patchedpost: {},
+
+                posts: [],
+
+                async createPost() {
+                    this.newpost = await (await fetch('https://jsonplaceholder.typicode.com/posts', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            title: 'foo',
+                            body: 'bar',
+                            userId: 1,
+                        }),
+                        headers: {
+                            'Content-type': 'application/json; charset=UTF-8',
+                        },
+                    })).json();
+
+                    console.log(this.newpost);
+                },
+
+                async updatePost() {
+                    this.updatedpost = await (await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            id: 1,
+                            title: 'foo',
+                            body: 'bar',
+                            userId: 1,
+                        }),
+                        headers: {
+                            'Content-type': 'application/json; charset=UTF-8',
+                        },
+                    })).json();
+
+                    console.log(this.updatedpost);
+                },
+
+                async patchPost() {
+                    this.patchedpost = await (await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            title: 'foo',
+                        }),
+                        headers: {
+                            'Content-type': 'application/json; charset=UTF-8',
+                        },
+                    })).json();
+
+                    console.log(this.patchedpost);
+                },
+
+                async deletePost() {
+                    let res = await fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                        method: 'DELETE',
+                    });
+
+                    console.log(res);
+                }
+            }))
+        })
+    </script>
+</body>
+
+</html>
