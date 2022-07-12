@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://alpinejs.dev/favicon.png">
+    <title>Apline JS playground</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="//unpkg.com/alpinejs" defer></script>
+</head>
+
+<body class="container">
+    <header class="hero is-primary">
+        <div class="hero-body">
+            <p class="title">Atom JS</p>
+            <p class="subtitle">Playground to test features</p>
+        </div>
+    </header>
+
+    <nav class="breadcrumb py-3" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li class="is-active"><a href="#" aria-current="page">API - Reactions</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div x-data="reactionsModel" x-init="await retrieveReactions">
+            <button x-show="!isLoading" @click="reloadReactions" class="button is-primary">
+                Click to releoad the reactions
+            </button>
+            <button class="button is-primary is-loading" x-show="isLoading">Loading</button>
+
+            <p class="panel p-4 mt-4" x-show="action" x-text="action"></p>
+            <pre class="panel p-4" x-show="response" x-text="response"></pre>
+
+            <div class="card mt-5" x-show="!isLoading" x-transition>
+                <div class="card-content">
+                    Likes: <p x-text="reactions.reactions.like" class="title is-4"></p>
+                </div>
+                <div class="card-footer p-4">
+                    <button x-bind:class="buttonLike" x-on:click="voteLike">I like it</button>
+                    <button class="button ml-2" x-on:click="voteDislike">I dislike it</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const url = 'https://1465098e-2b94-4276-94a9-34adf21c3ac6.mock.pstmn.io';
+        const currentUserId = 2;
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('reactionsModel', () => ({
+                buttonLike: 'button is-info is-outlined',
+                isLoading: false,
+                action: '',
+                response: null,
+                reactions: {
+                    reactions: {
+                        like: 0
+                    }
+                },
+                reloadReactions() {
+                    this.isLoading = true
+                    this.action = 'Reloading …'
+                    setTimeout(() => {
+                        this.retrieveReactions()
+                    }, 2000)
+                },
+                async retrieveReactions() {
+                    this.isLoading = true
+                    this.action = 'Retrieve reactions …'
+                    this.reactions = await (await fetch(`${url}/reactions/reference/article_30/`)).json();
+                    this.isLoading = false
+                },
+
+                async voteLike() {
+                    this.action = 'Voting like …'
+                    this.response = ''
+                    this.res = await (await fetch(`${url}/reactions/reference/article_30/`, {
+                        method: 'PUT',
+                        body: JSON.stringify({
+                            type: 'like'
+                        }),
+                        headers: {
+                            'Content-type': 'application/json; charset=UTF-8',
+                        },
+                    })).json();
+                    console.log(this.res);
+                    this.response = JSON.stringify(this.res, null, 2)
+                    this.reloadReactions()
+                },
+
+                async voteDislike() {
+                    this.action = 'Voting dislike …'
+                    this.response = ''
+                    this.res = await (await fetch(`${url}/reactions/reference/article_30/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-type': 'application/json; charset=UTF-8',
+                        },
+                    })).json();
+                    console.log(this.res);
+                    this.response = JSON.stringify(this.res, null, 2)
+                    this.reloadReactions()
+                },
+            }))
+        })
+    </script>
+</body>
+
+</html>
