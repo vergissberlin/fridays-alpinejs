@@ -37,13 +37,19 @@
             <pre class="panel p-4" x-show="response" x-text="response"></pre>
 
             <div class="card mt-5" x-show="!isLoading" x-transition>
+                <div class="card-image">
+                    <figure class="image">
+                        <img src="https://picsum.photos/seed/22278/1296/144" alt="Placeholder image">
+                    </figure>
+                </div>
                 <div class="card-content">
                     Likes: <p x-text="reactions.reactions.like" class="title is-4"></p>
+                    Dislikes: <p x-text="reactions.reactions.dislike" class="title is-4"></p>
                 </div>
-                <div class="card-footer p-4">
-                    <button x-bind:class="buttonLike" x-on:click="voteLike">I like it (UPDATE)</button>
-                    <button class="button ml-2" x-on:click="voteDislike">I dislike it (DELETE)</button>
-                </div>
+                <footer class="card-footer p-4">
+                    <a href="#" class="card-footer-item" x-on:click="voteLike">Like</a>
+                    <a href="#" class="card-footer-item" x-on:click="voteDislike">Dislike</a>
+                </footer>
             </div>
         </div>
     </main>
@@ -60,7 +66,8 @@
                 response: null,
                 reactions: {
                     reactions: {
-                        like: 0
+                        like: 0,
+                        dislike: 0
                     }
                 },
                 reloadReactions() {
@@ -70,6 +77,7 @@
                         this.retrieveReactions()
                     }, 2000)
                 },
+
                 async retrieveReactions() {
                     this.isLoading = true
                     this.action = 'Retrieve reactions …'
