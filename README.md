@@ -1,4 +1,4 @@
-# Fridays - Apline JS
+# Fridays - Alpine JS
 
 Example to learn how to work with Alpine JS.
 
